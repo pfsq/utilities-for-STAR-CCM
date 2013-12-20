@@ -4,3 +4,7 @@
 *.jar
 *.war
 *.ear
+
+# Files
+test.java
+trainFlowAngles.java
