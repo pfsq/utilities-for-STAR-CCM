@@ -1,6 +1,3 @@
-Catalog
-=======
-
 This is a brief description of some (if not all) of the macros stored within this folder.
 
 runCase.java
