@@ -4,8 +4,12 @@
 *.jar
 *.war
 *.ear
+*.xml
+*.mf
 
 # Files
 test.java
 trainFlowAngles.java
 test/
+/nbproject/private/
+/nbproject/
