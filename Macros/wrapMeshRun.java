@@ -31,6 +31,6 @@ public class wrapMeshRun extends MacroUtils {
     
     // Create elements for post-processing.
     void postProcessing() {
-        hardCopyPictures(xres, yres, "\\imagenes\\");
+        hardCopyPictures(xres, yres, "\\imagenes\\" + simTitle);
     }
 }
