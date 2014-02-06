@@ -19,7 +19,7 @@ public class macroLagrangian extends StarMacro {
     execute0();
   }
 
-  private void execute() {
+  private void execute0() {
       
     int [] sizePhase = {1, 2, 3, 4, 5, 7, 10, 20, 80, 120, 180, 200};
 
