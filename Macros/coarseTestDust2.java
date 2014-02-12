@@ -16,7 +16,7 @@ import star.lagrangian.*;
 import star.lagrangian.tracks.*;
 import star.material.*;
 
-public class coarseTestDust extends MacroUtils {
+public class coarseTestDust2 extends MacroUtils {
 
     public void execute() {
         _initUtils();
@@ -26,22 +26,24 @@ public class coarseTestDust extends MacroUtils {
 
     private void execute0() {
 
-        ArrayList<String> dust = new ArrayList<String>(Arrays.asList("1","2","3","4","5","7","10","20","40","80","120","180","200"));
+        ArrayList<Integer> dust = new ArrayList<>(Arrays.asList(1,2,3,4,5,7,10,20,40,80,120,180,200));
         
         ArrayList<PhysicsContinuum> phC = getAllPhysicsContinuas();
         
         for(PhysicsContinuum p : phC) {
             p.enable(LagrangianMultiphaseModel.class);
             LagrangianMultiphaseModel lmModel = p.getModelManager().getModel(LagrangianMultiphaseModel.class);
+            ArrayList<LagrangianPhase> lPh = new ArrayList<>();  // Generic ArrayList to store only LagrangianPhase objects
             
-            for(String d: dust) {
-                LagrangianPhase lPh = lmModel.createPhase();
-                lPh.setPresentationName(d);
-                lPh.enable(MaterialParticleModel.class);
-                lPh.enable(SingleComponentParticleModel.class);
-                lPh.enable(ConstantDensityModel.class);
-                lPh.enable(DragForceModel.class);
-                lPh.enable(TrackFileModel.class);
+            for(Integer d: dust) {
+                lPh.add(lmModel.createPhase());
+                String dustString = String.format("Phase %3d", d.intValue());
+                lPh.get(-1).setPresentationName(dustString);
+                lPh.get(-1).enable(MaterialParticleModel.class);
+                lPh.get(-1).enable(SingleComponentParticleModel.class);
+                lPh.get(-1).enable(ConstantDensityModel.class);
+                lPh.get(-1).enable(DragForceModel.class);
+                lPh.get(-1).enable(TrackFileModel.class);
             }
         }
 
