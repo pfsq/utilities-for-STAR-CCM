@@ -44,26 +44,11 @@ public class coarseTestDust2 extends MacroUtils {
                 lPh.get(-1).enable(ConstantDensityModel.class);
                 lPh.get(-1).enable(DragForceModel.class);
                 lPh.get(-1).enable(TrackFileModel.class);
+                
+                SingleComponentParticleModel sCPM = lPh.get(-1).getModelManager().getModel(SingleComponentParticleModel.class);
+                
             }
         }
-
-        LagrangianMultiphaseModel lagrangianMultiphaseModel_1
-                = physicsContinuum_1.getModelManager().getModel(LagrangianMultiphaseModel.class);
-
-        LagrangianPhase lagrangianPhase_3
-                = lagrangianMultiphaseModel_1.createPhase();
-
-        lagrangianPhase_3.setPresentationName("Phase 001");
-
-        lagrangianPhase_3.enable(MaterialParticleModel.class);
-
-        lagrangianPhase_3.enable(SingleComponentParticleModel.class);
-
-        lagrangianPhase_3.enable(ConstantDensityModel.class);
-
-        lagrangianPhase_3.enable(DragForceModel.class);
-
-        lagrangianPhase_3.enable(TrackFileModel.class);
 
         SingleComponentParticleMaterial singleComponentParticleMaterial_1
                 = ((SingleComponentParticleMaterial) SingleComponentParticleModel_1.getMaterial());
