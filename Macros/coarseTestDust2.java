@@ -1,8 +1,7 @@
 /**
  * STAR-CCM+ macro: coarseTestDust2.java
  * 
- * This macro will create dust particles from 1 to 200 microns in size. It will
- * also define the Size Distribution by Volume % according to:
+ * This macro will create dust particles from 1 to 200 microns in size according to:
  *    - ISO 12103-1.
  * 
  * @author Pablo Fernandez (pfernandez@theansweris27.com)
@@ -15,12 +14,9 @@ import star.flow.*;
 import star.lagrangian.*;
 import star.lagrangian.tracks.*;
 import star.material.*;
+import star.vis.*;
 
 public class coarseTestDust2 extends MacroUtils {
-    
-    //Particle sizes in microns (ISO 12103-1).
-    ArrayList<Integer> dust = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 7, 10, 20, 40, 80, 120, 180, 200));
-    ArrayList<PhysicsContinuum> phC = getAllPhysicsContinuas();
     
     public void execute() {
         _initUtils();
@@ -30,6 +26,9 @@ public class coarseTestDust2 extends MacroUtils {
     }
 
     private void lagrangianMultiphase() {
+        
+        ArrayList<Integer> dust = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 7, 10, 20, 40, 80, 120, 180, 200));
+        ArrayList<PhysicsContinuum> phC = getAllPhysicsContinuas();
         
         for(PhysicsContinuum p : phC) {
             
@@ -47,6 +46,7 @@ public class coarseTestDust2 extends MacroUtils {
                 lPh.get(lPh.size()-1).enable(ConstantDensityModel.class);
                 lPh.get(lPh.size()-1).enable(DragForceModel.class);
                 lPh.get(lPh.size()-1).enable(TrackFileModel.class);
+                lPh.get(lPh.size()-1).enable(BoundarySamplingModel.class);
                 
                 SingleComponentParticleModel sCPM = lPh.get(lPh.size()-1).getModelManager().getModel(SingleComponentParticleModel.class);
                 SingleComponentParticleMaterial sCPMa = ((SingleComponentParticleMaterial) sCPM.getMaterial());
@@ -59,6 +59,37 @@ public class coarseTestDust2 extends MacroUtils {
                 TangentialRestitutionCoefficient tRC = dBC.getValues().get(TangentialRestitutionCoefficient.class);
                 tRC.getMethod(ConstantScalarProfileMethod.class).getQuantity().setValue(0.4);
             }
+        }
+    }
+    
+    private void particleInjectors() {
+        
+        //Particle sizes in microns (ISO 12103-1).
+        Units um = ((Units) sim.getUnitsManager().getObject("um"));
+        ArrayList<Integer> dust = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 7, 10, 20, 40, 80, 120, 180, 200));
+        ArrayList<PhysicsContinuum> phC = getAllPhysicsContinuas();
+        
+        for(PhysicsContinuum p : phC) {
+            
+            LagrangianMultiphaseModel lMM = p.getModelManager().getModel(LagrangianMultiphaseModel.class);
+            
+            for(Integer d : dust) {
+                
+                Injector i = sim.get(InjectorManager.class).createInjector();
+                String dustString = String.format("Phase %03d", d.intValue());
+                LagrangianPhase lP = ((LagrangianPhase) lMM.getPhaseManager().getPhase(dustString));
+                i.setLagrangianPhase(lP);
+                i.setInjectorType(PartInjector.class);
+                PlaneProbePart pPP = ((PlaneProbePart) sim.getPartManager().getObject("presentation grid")); 
+                i.getPartGroup().setObjects(pPP);
+                InjectorMassFlowRate iMFR = i.getInjectorValues().get(InjectorMassFlowRate.class);
+                iMFR.getMethod(ConstantScalarProfileMethod.class).getQuantity().setValue(0.002);
+                InjectorParticleDiameter iPD = i.getInjectorValues().get(InjectorParticleDiameter.class);
+                iPD.getMethod(ConstantScalarProfileMethod.class).getQuantity().setUnits(um);
+                iPD.getMethod(ConstantScalarProfileMethod.class).getQuantity().setValue(d.intValue());
+                String injectorString = String.format("Injector %03d", d.intValue());
+                i.setPresentationName(injectorString);
+           }        
         }
     }
 }
