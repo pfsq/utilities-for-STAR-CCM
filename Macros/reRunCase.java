@@ -6,16 +6,15 @@
 
 import macroutils.*;
 
-public class runCase extends MacroUtils {
+public class reRunCase extends MacroUtils {
     
     private int xres = 1280;
     private int yres = 720;
 
     public void execute() {
         _initUtils();
-        clearSolution();
+        clearSolutionHistory();
         executeWrapAndMesh();
-        initializeSolution();
         runCase(true);
         saveSimWithSuffix("@finished");
         postProcessing();
