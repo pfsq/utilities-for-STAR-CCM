@@ -1,8 +1,12 @@
 /**
  * STAR-CCM+ macro: coarseTestDust2.java
  * 
- * This macro will create dust particles from 1 to 200 microns in size according to:
+ * This macro will create dust particles from 1 to 200 microns in size according
+ * to:
  *    - ISO 12103-1.
+ * 
+ * A new derived part > probe > presentation grid, named "presentation grid",
+ * must be created before running this macro as is.
  * 
  * @author Pablo Fernandez (pfernandez@theansweris27.com)
  */
@@ -38,6 +42,7 @@ public class coarseTestDust2 extends MacroUtils {
             
             for(Integer d : dust) {
                 
+                // Create Phase and enable Lagrangian models
                 lPh.add(lmModel.createPhase());
                 String dustString = String.format("Phase %03d", d.intValue());
                 lPh.get(lPh.size()-1).setPresentationName(dustString);
@@ -48,11 +53,14 @@ public class coarseTestDust2 extends MacroUtils {
                 lPh.get(lPh.size()-1).enable(TrackFileModel.class);
                 lPh.get(lPh.size()-1).enable(BoundarySamplingModel.class);
                 
+                // Define dust properties
                 SingleComponentParticleModel sCPM = lPh.get(lPh.size()-1).getModelManager().getModel(SingleComponentParticleModel.class);
                 SingleComponentParticleMaterial sCPMa = ((SingleComponentParticleMaterial) sCPM.getMaterial());
                 sCPMa.setPresentationName("Dust");
                 ConstantMaterialPropertyMethod cMPM = ((ConstantMaterialPropertyMethod) sCPMa.getMaterialProperties().getMaterialProperty(ConstantDensityProperty.class).getMethod());
                 cMPM.getQuantity().setValue(1200.0);
+                
+                // Set boundary conditions for dust particles
                 DefaultBoundaryConditions dBC = ((DefaultBoundaryConditions) lPh.get(lPh.size()-1).getDefaultBoundaryConditionsManager().getBoundaryConditions(WallBoundary.class));
                 NormalRestitutionCoefficient nRC = dBC.getValues().get(NormalRestitutionCoefficient.class);
                 nRC.getMethod(ConstantScalarProfileMethod.class).getQuantity().setValue(0.4);
@@ -75,6 +83,7 @@ public class coarseTestDust2 extends MacroUtils {
             
             for(Integer d : dust) {
                 
+                // Assign each Lagrangian phase to an injector
                 Injector i = sim.get(InjectorManager.class).createInjector();
                 String dustString = String.format("Phase %03d", d.intValue());
                 LagrangianPhase lP = ((LagrangianPhase) lMM.getPhaseManager().getPhase(dustString));
@@ -82,8 +91,12 @@ public class coarseTestDust2 extends MacroUtils {
                 i.setInjectorType(PartInjector.class);
                 PlaneProbePart pPP = ((PlaneProbePart) sim.getPartManager().getObject("presentation grid")); 
                 i.getPartGroup().setObjects(pPP);
+                
+                // Set mass flow rate to 0.002 kg/s
                 InjectorMassFlowRate iMFR = i.getInjectorValues().get(InjectorMassFlowRate.class);
                 iMFR.getMethod(ConstantScalarProfileMethod.class).getQuantity().setValue(0.002);
+                
+                // Particle size in micro-meters
                 InjectorParticleDiameter iPD = i.getInjectorValues().get(InjectorParticleDiameter.class);
                 iPD.getMethod(ConstantScalarProfileMethod.class).getQuantity().setUnits(um);
                 iPD.getMethod(ConstantScalarProfileMethod.class).getQuantity().setValue(d.intValue());
