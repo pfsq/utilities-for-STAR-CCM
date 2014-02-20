@@ -10,8 +10,11 @@
 # Files
 test.java
 trainFlowAngles.java
+
+# Folders
 test/
 /nbproject/private/
 /nbproject/
 Classes/notification/
 MacroUtils/
+Private/
