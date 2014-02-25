@@ -8,8 +8,8 @@ import macroutils.*;
 
 public class runCase2 extends MacroUtils {
     
-    private int xres = 1280;
-    private int yres = 720;
+    private final int xres = 1280;
+    private final int yres = 720;
 
     public void execute() {
         _initUtils();
