@@ -20,7 +20,7 @@ import star.lagrangian.tracks.*;
 import star.material.*;
 import star.vis.*;
 
-public class coarseTestDust2 extends MacroUtils {
+public class coarseTestDust extends MacroUtils {
     
     public void execute() {
         _initUtils();
