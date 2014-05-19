@@ -14,7 +14,7 @@ public class reRunCase extends MacroUtils {
     public void execute() {
         _initUtils();
         clearSolutionHistory();
-        executeWrapAndMesh();
+        //executeWrapAndMesh();
         runCase(true);
         saveSimWithSuffix("@finished");
         postProcessing();
